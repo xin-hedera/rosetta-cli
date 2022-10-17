@@ -141,6 +141,27 @@ func loadAccounts(filePath string) ([]*types.AccountCurrency, error) {
 	return accounts, nil
 }
 
+// loadCurrencies is a utility function to parse the []*types.Currency in a file.
+func loadCurrencies(filePath string) (empty []*types.Currency, _ error) {
+	if len(filePath) == 0 {
+		return empty, nil
+	}
+
+	currencies := []*types.Currency{}
+	if err := utils.LoadAndParse(filePath, &currencies); err != nil {
+		return nil, fmt.Errorf("unable to load and parse %s: %w", filePath, err)
+	}
+
+	log.Printf(
+		"Found %d currencies at %s: %s\n",
+		len(currencies),
+		filePath,
+		types.PrettyPrintStruct(currencies),
+	)
+
+	return currencies, nil
+}
+
 // CloseDatabase closes the database used by DataTester.
 func (t *DataTester) CloseDatabase(ctx context.Context) {
 	if err := t.database.Close(ctx); err != nil {
@@ -225,6 +246,11 @@ func InitializeData(
 		return nil, fmt.Errorf("unable to load interesting accounts: %w", err)
 	}
 
+	interestingCurrencies, err := loadCurrencies(config.Data.InterestingCurrencies)
+	if err != nil {
+		return nil, fmt.Errorf("unable to load interesting currencies: %w", err)
+	}
+
 	counterStorage := modules.NewCounterStorage(localStore)
 	blockStorage := modules.NewBlockStorage(localStore, config.SerialBlockWorkers)
 	balanceStorage := modules.NewBalanceStorage(localStore)
@@ -293,6 +319,7 @@ func InitializeData(
 		reconciler.WithActiveConcurrency(int(config.Data.ActiveReconciliationConcurrency)),
 		reconciler.WithInactiveConcurrency(int(config.Data.InactiveReconciliationConcurrency)),
 		reconciler.WithInterestingAccounts(interestingAccounts),
+		reconciler.WithInterestingCurrencies(interestingCurrencies),
 		reconciler.WithSeenAccounts(seenAccounts),
 		reconciler.WithInactiveFrequency(int64(config.Data.InactiveReconciliationFrequency)),
 		reconciler.WithBalancePruning(),

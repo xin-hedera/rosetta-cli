@@ -276,6 +276,10 @@ type DataConfiguration struct {
 	// at the examples directory for an example of how to structure this file.
 	InterestingAccounts string `json:"interesting_accounts"`
 
+	// InterestingCurrencies is a path to a file listing all currencies to check on each block. Look
+	// at the examples directory for an example of how to structure this file.
+	InterestingCurrencies string `json:"interesting_currencies"`
+
 	// ReconciliationDisabled is a boolean that indicates reconciliation should not
 	// be attempted. When first testing an implementation, it can be useful to disable
 	// some of the more advanced checks to confirm syncing is working as expected.

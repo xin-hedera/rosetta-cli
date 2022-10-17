@@ -380,6 +380,10 @@ func modifyFilePaths(config *Configuration, fileDir string) {
 			config.Data.InterestingAccounts = path.Join(fileDir, config.Data.InterestingAccounts)
 		}
 
+		if len(config.Data.InterestingCurrencies) > 0 {
+			config.Data.InterestingCurrencies = path.Join(fileDir, config.Data.InterestingCurrencies)
+		}
+
 		if len(config.Data.ExemptAccounts) > 0 {
 			config.Data.ExemptAccounts = path.Join(fileDir, config.Data.ExemptAccounts)
 		}
